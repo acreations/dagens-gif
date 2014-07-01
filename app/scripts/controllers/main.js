@@ -2,13 +2,22 @@
 
 angular.module('dagensgif')
 
-  .controller('DailyGifCtrl', function ($scope) {
+.controller('DailyGifCtrl', ['$scope', '$log', 'dateFilter','dagensgifRepository', function ($scope, $log, dateFilter, dgr) {
 
-    $scope.current = 'http://i.imgur.com/McyTTBA.gif';
+  $scope.reload = function() {
+    var today = dateFilter(new Date(), 'yyyy-MM-dd');
 
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+    $log.debug('Reload dagensgif controller for ' + today);
+
+    dgr.get(today).then(
+        function(data) {
+          $log.debug('Got dagensgif', data);
+
+          $scope.image = data.image;
+        },
+        function(error) {
+          $log.error('Failed to get dagensgif', error);
+        }
+    );
+  };
+}]);

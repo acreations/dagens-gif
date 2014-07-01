@@ -6,7 +6,7 @@ angular.module('dagensgif')
   return {
     restrict: 'A',
     transclude: false,
-    scope: { format: '@' },
+    scope: { alarm: '&' },
     link: function (scope, element) {
 
       var updateTime = function() {
@@ -28,6 +28,10 @@ angular.module('dagensgif')
         t.setHours(h);
         t.setMinutes(m);
         t.setSeconds(s);
+
+        if(scope.alarm && h === 0 && m === 0 && s === 0) {
+          scope.alarm();
+        }
 
         element.text(dateFilter(t, 'HH:mm:ss' ));
       };
