@@ -13,6 +13,7 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/sass-bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -29,16 +30,21 @@
         <!-- Navigation -->
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a ng-href="#">Today</a></li>
-          <li><a ng-href="#">Future</a></li>
+          <li class="active"><a ng-href="#">Dagens</a></li>
+          <li><a ng-href="#">Imorgon</a></li>
         </ul>
-        <h3 class="text-muted">&nbsp;</h3>
+        <h3 class="text-muted"><i class="fa fa-clock-o"> <span data-time data-format="HH:mm:ss"></i></h3>
       </div>
 
-      <div ng-include="'views/main.html'" ng-controller="DailyGifCtrl" />
+      <div ng-include="'views/main.html'" ng-controller="DailyGifCtrl"></div>
 
       <div class="footer">
-        <p>♥ from the Yeoman team</p>
+        <div class="container-fluid">
+          <div class="pull-right">
+            <i class="fa fa-angle-right"> Nästa GIF om <span data-countdown></span></i>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -69,6 +75,8 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/directives/countdown.js"></script>
+        <script src="scripts/directives/time.js"></script>
         <!-- endbuild -->
 </body>
 </html>
