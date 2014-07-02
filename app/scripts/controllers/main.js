@@ -21,20 +21,9 @@ angular.module('dagensgif')
 
     dgr.get(today).then(
         function(data) {
-          $log.debug('Got dagensgif', jQuery('#dagensgif'));
+          $log.debug('Got dagensgif', data);
 
           $scope.image = data.image;
-
-          $timeout(function() {
-            var image = new Image();
-            image.src = data.image;
-            image.crossOrigin = 'Anonymous';
-
-            var colorThief = new ColorThief();
-            var bgColor = colorThief.getColor(image);
-
-            $log.debug('Color thief', bgColor);
-          }, 2000);
         },
         function(error) {
           $log.error('Failed to get dagensgif', error);
