@@ -2,15 +2,45 @@
 
 angular.module('dagensgif')
 
-.controller('MainCtrl', ['$scope', '$log', function ($scope, $log) {
+.controller('MainCtrl', ['$scope', '$log', '$cookies', 'dateFilter','dagensgifRepository', '$timeout',
+  function ($scope, $log, $cookies, dateFilter, dgr, $timeout) {
 
   $scope.settings = {};
 
   $scope.settings.saved = {
     'title': 'Dagens GIF',
-    'bgcolor': '#ff00ff',
-    'color': '#000000'
-  }
+    'bgcolor': '#ffffff',
+    'color': '#000000',
+    'gifColorAsBackground': true
+  };
+
+  $scope.refresh = function() {
+    var today = dateFilter(new Date(), 'yyyy-MM-dd');
+
+    $log.debug('Reload dagensgif controller for ' + today);
+
+    dgr.get(today).then(
+        function(data) {
+          $log.debug('Got dagensgif', jQuery('#dagensgif'));
+
+          $scope.image = data.image;
+
+          $timeout(function() {
+            var image = new Image();
+            image.src = data.image;
+            image.crossOrigin = 'Anonymous';
+
+            var colorThief = new ColorThief();
+            var bgColor = colorThief.getColor(image);
+
+            $log.debug('Color thief', bgColor);
+          }, 2000);
+        },
+        function(error) {
+          $log.error('Failed to get dagensgif', error);
+        }
+    );
+  };
 
   $scope.reset = function() {
     $log.debug('Reset main controller');
@@ -21,16 +51,47 @@ angular.module('dagensgif')
   $scope.saveSettings = function() {
     $scope.settings.saved = JSON.parse(JSON.stringify($scope.settings.updates));
 
-    updateBodyStyle($scope.settings.saved);
-  }
+    saveInCookies();
+    updateBodyStyle();
+  };
 
-  var updateBodyStyle = function(settings) {
+  var saveInCookies = function() {
+    $log.debug('Save settings in cookies');
+
+    $cookies.title = $scope.settings.saved.title;
+    $cookies.bodyBackgroundColor = $scope.settings.saved.bgcolor;
+    $cookies.bodyTextColor = $scope.settings.saved.color;
+    $cookies.gifColorAsBackground = $scope.settings.saved.gifColorAsBackground; 
+  };
+
+  var updateBodyStyle = function() {
+    $log.debug('Update body styles');
     $scope.bodyStyle = {
-      'background-color': settings.bgcolor,
-      'color': settings.color
+      'background-color': $scope.settings.saved.bgcolor,
+      'color': $scope.settings.saved.color
+    };
+  };
+
+  var updateByCookies = function() {
+    $log.debug('Check if something saved in cookies');
+
+    if($cookies.title) {
+      $scope.settings.saved.title = $cookies.title;
+    }
+    
+    if($cookies.bodyBackgroundColor) {
+      $scope.settings.saved.bgcolor = $cookies.bodyBackgroundColor;
+    }
+    
+    if($cookies.bodyTextColor) {
+      $scope.settings.saved.color = $cookies.bodyTextColor;
+    }
+
+    if($cookies.gifColorAsBackground) {
+      $scope.settings.saved.gifColorAsBackground = $cookies.gifColorAsBackground;
     }
   };
 
-  updateBodyStyle($scope.settings.saved);
-
+  updateByCookies();
+  updateBodyStyle();
 }]);

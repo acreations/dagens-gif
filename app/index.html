@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="dagensgif" data-ng-controller="MainCtrl" ng-style="bodyStyle">
+  <body ng-app="dagensgif" data-ng-controller="MainCtrl" data-ng-style="bodyStyle" data-ng-init="refresh()">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong>   . Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -29,20 +29,37 @@
     <div class="container">
         <!-- Navigation -->
       <div class="header">
-        <ul class="nav nav-pills pull-right">
+        <ul class="nav nav-pills nav-pills-color pull-right">
           <li class="active"><a ng-href="#">Dagens</a></li>
-          <li><a ng-href="#">Imorgon</a></li>
+          <li class="disabled"><a ng-href="#">Imorgon</a></li>
         </ul>
         <h3>
-          <i class="fa fa-cog fa-1x" data-toggle="modal" data-target="#settingsModal" data-ng-click="reset()"></i>
+          <i class="fa fa-cog fa-1x pointer" data-toggle="modal" data-target="#settingsModal" data-ng-click="reset()"></i>
           <i class="fa fa-clock-o fa-1x">&nbsp;<span data-time data-format="HH:mm:ss"></i>
         </h3>
       </div>
 
-      <h1 class="text-center" data-ng-bind="settings.saved.title"></h1>
-      <div ng-include="'views/main.html'" data-ng-controller="DagensGifCtrl" data-ng-init="reload()"></div>
+      <div id="main">
+        <h1 class="text-center" data-ng-bind="settings.saved.title"></h1>
 
-      <div class="modal fade" id="settingsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="img-responsive dagens-gif" style="background-image: url({{ image }})"></div>
+        <img id="dagensgif" src="{{image}}" data-ng-show="false" /> 
+
+
+        <div class="footer">
+            <div class="container-fluid">
+              <div class="pull-right">
+                <i class="fa fa-angle-right">
+                    <strong>
+                        &nbsp;Nästa GIF om <span data-countdown data-alarm="reload()"></span>
+                    </strong>
+                    </i>
+              </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="settingsModal" 
+          tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -62,7 +79,18 @@
                 <div class="form-group">
                   <label for="bgcolor" class="col-sm-3 control-label">Bakgrund färg</label>
                   <div class="col-sm-3">
-                    <input id="bgcolor" class="form-control" colorpicker data-ng-model="settings.updates.bgcolor" type="text">
+                    <input id="bgcolor" class="form-control" colorpicker data-ng-model="settings.updates.bgcolor" type="text" data-ng-disabled="settings.updates.gifColorAsBackground">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-offset-3 col-sm-9">
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" data-ng-model="settings.updates.gifColorAsBackground"> 
+                        Använd GIF:ens färg
+                      </label>
+                    </div>
                   </div>
                 </div>
 
@@ -93,12 +121,14 @@
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/bootstrap-colorpicker-module.js"></script>
+        <script src="scripts/color-thief.min.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/services/dagensgif.js"></script>
         <script src="scripts/controllers/main.js"></script>
