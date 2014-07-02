@@ -22,30 +22,24 @@
   </head>
   <body ng-app="dagensgif">
     <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+      <p class="browsehappy">You are using an <strong>outdated</strong>   . Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="container" data-ng-controller="DailyGifCtrl" data-ng-init="reload()">
+    <div class="container">
         <!-- Navigation -->
       <div class="header">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a ng-href="#">Dagens</a></li>
           <li><a ng-href="#">Imorgon</a></li>
         </ul>
-        <h3 class="text-muted"><i class="fa fa-clock-o">&nbsp;<span data-time data-format="HH:mm:ss"></i></h3>
+        <h3 class="text-muted">
+          <i class="fa fa-cog fa-1x"></i>
+          <i class="fa fa-clock-o fa-1x">&nbsp;<span data-time data-format="HH:mm:ss"></i>
+        </h3>
       </div>
 
-      <div ng-include="'views/main.html'"></div>
-
-      <div class="footer">
-        <div class="container-fluid">
-          <div class="pull-right">
-            <i class="fa fa-angle-right">&nbsp;Nästa GIF om <span data-countdown data-alarm="reload()"></span></i>
-          </div>
-        </div>
-
-      </div>
+      <div ng-include="'views/main.html'" data-ng-controller="DagensGifCtrl" data-ng-init="reload()"></div>
     </div>
 
     <!--[if lt IE 9]>
@@ -62,9 +56,11 @@
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/bootstrap-colorpicker-module.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/services/dagensgif.js"></script>
         <script src="scripts/controllers/main.js"></script>
+        <script src="scripts/controllers/dagensgif.js"></script>
         <script src="scripts/directives/countdown.js"></script>
         <script src="scripts/directives/time.js"></script>
         <!-- endbuild -->
