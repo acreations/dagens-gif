@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('dagensgif', []);
+angular.module('dagensgif', ['colorpicker.module']);
