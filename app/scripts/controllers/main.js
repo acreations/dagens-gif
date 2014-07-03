@@ -81,6 +81,37 @@ angular.module('dagensgif')
     }
   };
 
+  $scope.reload = function() {
+    var dailyGif = new Firebase('https://blazing-fire-1815.firebaseio.com/-JQsiwN-QJMFiEsUgTn3');
+
+    dailyGif.on('value', function(response) {
+      if(response.val() == null) {
+        $log.error('Failed to get dagensgif');
+      }
+      else {
+        var gif = response.val();
+        $scope.image = today.image;
+        $scope.by = today.by;
+      }
+    });
+  };
+
+  $scope.addGif = function() {
+    var addGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+    addGif.push({image: '', by: '', votes: 0});
+  };
+
+  $scope.showGifs = function() {
+    var showGifs = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+    $scope.showGifs = {};
+
+    var fourGifs = showGifs.startAt().limit(4);
+
+    fourGifs.on('value', function(response) {
+      $scope.showGifs = response.val();
+    });
+  };
+
   updateByCookies();
   updateBodyStyle();
 }]);
