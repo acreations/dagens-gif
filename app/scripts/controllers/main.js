@@ -6,6 +6,9 @@ angular.module('dagensgif')
   function ($scope, $log, $cookies, dateFilter, dgr, $timeout) {
 
   $scope.settings = {};
+  $scope.state = "today";
+  $scope.url = "";
+  $scope.name = "";
 
   $scope.settings.saved = {
     'title': 'Dagens GIF',
@@ -50,7 +53,7 @@ angular.module('dagensgif')
     $cookies.title = $scope.settings.saved.title;
     $cookies.bodyBackgroundColor = $scope.settings.saved.bgcolor;
     $cookies.bodyTextColor = $scope.settings.saved.color;
-    $cookies.gifColorAsBackground = $scope.settings.saved.gifColorAsBackground; 
+    $cookies.gifColorAsBackground = $scope.settings.saved.gifColorAsBackground;
   };
 
   var updateBodyStyle = function() {
@@ -90,26 +93,40 @@ angular.module('dagensgif')
       }
       else {
         var gif = response.val();
-        $scope.image = today.image;
-        $scope.by = today.by;
+        $scope.image = gif.image;
+        $scope.by = gif.by;
       }
     });
   };
 
   $scope.addGif = function() {
     var addGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
-    addGif.push({image: '', by: '', votes: 0});
+    addGif.push({image: $scope.url, by: $scope.name, votes: 0});
   };
 
   $scope.showGifs = function() {
     var showGifs = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
     $scope.showGifs = {};
+    $scope.references = [];
 
     var fourGifs = showGifs.startAt().limit(4);
 
     fourGifs.on('value', function(response) {
+      response.forEach(function(gif) {
+          $scope.references.push(gif.name());
+      });
       $scope.showGifs = response.val();
     });
+  };
+
+  $scope.addVote = function(reference, votes) {
+    var addVote = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+
+    addVote.child(reference).update( { votes: votes + 1 } );
+  };
+
+  $scope.changeGif = function() {
+   
   };
 
   updateByCookies();

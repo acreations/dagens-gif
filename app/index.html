@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="dagensgif" data-ng-controller="MainCtrl" data-ng-style="bodyStyle" data-ng-init="refresh()">
+  <body ng-app="dagensgif" data-ng-controller="MainCtrl" data-ng-style="bodyStyle" data-ng-init="reload()">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong>   . Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -30,8 +30,9 @@
         <!-- Navigation -->
       <div class="header">
         <ul class="nav nav-pills nav-pills-color pull-right">
-          <li class="active"><a ng-href="#">Dagens</a></li>
-          <li class="disabled"><a ng-href="#">Imorgon</a></li>
+          <li class="active"><a data-ng-click = "state = 'today'" ng-href="#">Dagens</a></li>
+          <li class="active"><a data-ng-click = "state = 'tomorrow'" ng-href="#" data-ng-mouseup="showGifs()" >Imorgon</a></li>
+          <li class="active"><a data-ng-href="#"data-toggle="modal" data-target="#addGifModal">Lägg till Gif</a>
         </ul>
         <h3>
           <i class="fa fa-cog fa-1x pointer" data-toggle="modal" data-target="#settingsModal" data-ng-click="reset()"></i>
@@ -42,14 +43,25 @@
       <div id="main">
         <h1 class="text-center" data-ng-bind="settings.saved.title"></h1>
 
-        <div class="img-responsive dagens-gif" style="background-image: url({{ image }})"></div>
+        <div data-ng-show = "state == 'today'" class="img-responsive dagens-gif" style="background-image: url({{ image }})"></div>
+
+        <div data-ng-show="state == 'tomorrow'">
+          <div data-ng-repeat="gif in showGifs">
+            <img src="{{gif.image}}"></img>
+            <br>
+            <p>Tillagd av: {{by}}</p>
+            <p data-ng-repeat="reference in references">
+              <button class="btn btn-primary" data-ng-click="addVote(reference, gif.votes)">Rösta</button>
+            </p>
+          </div>
+        </div>
 
         <div class="footer">
             <div class="container-fluid">
               <div class="pull-right">
                 <i class="fa fa-angle-right">
                     <strong>
-                        &nbsp;Nästa GIF om <span data-countdown data-alarm="reload()"></span>
+                        &nbsp;Nästa GIF om <span data-countdown data-alarm="changeGif()"></span>
                     </strong>
                     </i>
               </div>
@@ -108,6 +120,30 @@
           </div>
         </div>
       </div>
+
+      <div class="modal fade" id="addGifModal" 
+          tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title" id="myModalLabel2">Lägg till en Gif</h4>
+            </div>
+            <div class="modal-body">
+
+               <form class="form-horizontal" role="form">
+                  <input type="text" class="form-control" placeholder="Url" data-ng-model="url" />
+                  <input type="text" class="form-control" placeholder="Ditt namn" data-ng-model="name" />
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="saveSettings()">Spara</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!--[if lt IE 9]>
@@ -121,6 +157,7 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/sass-bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="bower_components/firebase/firebase.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
