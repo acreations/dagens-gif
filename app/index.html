@@ -51,7 +51,8 @@
               <div class="thumbnail">
                 <img class="img-responsive" src="{{gif.image}}"></img>
                 <br>
-                <p>Tillagd av: {{gif.by}} Röster: <span class="badge">{{gif.votes}}</span></p>
+                <p>Tillagd av: {{gif.by}}</p>
+                <p>Röster: <span class="badge">{{gif.votes}}</span></p>
                 <button class="btn btn-primary" data-ng-disabled="hasVoted" data-ng-click="addVote(gif.reference)">Rösta</button>
                 </div>
             </div>
