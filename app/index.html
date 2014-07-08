@@ -30,9 +30,9 @@
         <!-- Navigation -->
       <div class="header">
         <ul class="nav nav-pills nav-pills-color pull-right">
-          <li class="active"><a data-ng-click = "state = 'today'" ng-href="#">Dagens</a></li>
-          <li class="active"><a data-ng-click = "state = 'tomorrow'" ng-href="#" data-ng-mouseup="showGifs()" >Imorgon</a></li>
-          <li class="active"><a data-ng-href="#"data-toggle="modal" data-target="#addGifModal">Lägg till Gif</a>
+          <li data-ng-class="{ active: state == 'today' }"><a data-ng-click = "state = 'today'" ng-href="#">Dagens</a></li>
+          <li data-ng-class="{ active: state == 'tomorrow' }"><a data-ng-click = "state = 'tomorrow'" ng-href="#" data-ng-mouseup="showGifs()" >Imorgon</a></li>
+          <li><a data-ng-href="#"data-toggle="modal" data-target="#addGifModal">Lägg till Gif</a>
         </ul>
         <h3>
           <i class="fa fa-cog fa-1x pointer" data-toggle="modal" data-target="#settingsModal" data-ng-click="reset()"></i>
@@ -41,18 +41,20 @@
       </div>
 
       <div id="main">
-        <h1 class="text-center" data-ng-bind="settings.saved.title"></h1>
+        <h1 class="text-center" data-ng-show="state == 'today'" data-ng-bind="settings.saved.title"></h1>
+        <h1 class="text-center" data-ng-show="state == 'tomorrow'">Morgondagens Gif</h1>
 
         <div data-ng-show = "state == 'today'" class="img-responsive dagens-gif" style="background-image: url({{ image }})"></div>
 
-        <div data-ng-show="state == 'tomorrow'">
-          <div data-ng-repeat="gif in showGifs">
-            <img src="{{gif.image}}"></img>
-            <br>
-            <p>Tillagd av: {{by}}</p>
-            <p data-ng-repeat="reference in references">
-              <button class="btn btn-primary" data-ng-click="addVote(reference, gif.votes)">Rösta</button>
-            </p>
+        <div data-ng-show="state == 'tomorrow'" class="row">
+          <div data-ng-repeat="gif in showGifs" class="col-md-6">
+              <div class="thumbnail">
+                <img class="img-responsive" src="{{gif.image}}"></img>
+                <br>
+                <p>Tillagd av: {{gif.by}} Röster: <span class="badge">{{gif.votes}}</span></p>
+                <button class="btn btn-primary" data-ng-disabled="hasVoted" data-ng-click="addVote(gif.reference)">Rösta</button>
+                </div>
+            </div>
           </div>
         </div>
 
@@ -139,7 +141,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-default" data-dismiss="modal">Avbryt</button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="saveSettings()">Spara</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" data-ng-click="addGif()">Spara</button>
             </div>
           </div>
         </div>

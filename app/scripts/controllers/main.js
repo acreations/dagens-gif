@@ -6,9 +6,10 @@ angular.module('dagensgif')
   function ($scope, $log, $cookies, dateFilter, dgr, $timeout) {
 
   $scope.settings = {};
-  $scope.state = "today";
-  $scope.url = "";
-  $scope.name = "";
+  $scope.state = 'today';
+  $scope.url = '';
+  $scope.name = '';
+  $scope.hasVoted = false;
 
   $scope.settings.saved = {
     'title': 'Dagens GIF',
@@ -97,36 +98,70 @@ angular.module('dagensgif')
         $scope.by = gif.by;
       }
     });
+
+    $scope.hasVoted = $cookies.hasVoted;
   };
 
   $scope.addGif = function() {
     var addGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
-    addGif.push({image: $scope.url, by: $scope.name, votes: 0});
+    var returnsReference = addGif.push({ image: $scope.url, by: $scope.name, votes: 0, reference: '' });
+    var reference = returnsReference.name();
+
+    addGif.child(reference).update({ reference: reference });
   };
 
   $scope.showGifs = function() {
     var showGifs = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
     $scope.showGifs = {};
-    $scope.references = [];
 
     var fourGifs = showGifs.startAt().limit(4);
 
     fourGifs.on('value', function(response) {
-      response.forEach(function(gif) {
-          $scope.references.push(gif.name());
-      });
       $scope.showGifs = response.val();
     });
   };
 
-  $scope.addVote = function(reference, votes) {
-    var addVote = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+  $scope.addVote = function(reference) {
+    if(!$scope.hasVoted) {
+      var addVote = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
 
-    addVote.child(reference).update( { votes: votes + 1 } );
+      addVote.child(reference).transaction(function(response) {
+        response.votes = response.votes + 1;
+        return response;
+      });
+
+      $cookies.hasVoted = true;
+      $scope.hasVoted = $cookies.hasVoted;
+    }
   };
 
   $scope.changeGif = function() {
-   
+    var changeGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+    
+    var mostVotes = 0;
+    var reference = '';
+    var newGif = {};
+
+    var fourGifs = changeGif.startAt().limit(4);
+
+    fourGifs.on('value', function(response) {
+      response.forEach(function(gif) {
+          if(gif.votes > mostVotes) {
+            mostVotes = gif.votes();
+            reference = gif.name();
+            newGif = gif.val();
+          }
+      });
+    });
+
+    var dailyGif = new Firebase('https://blazing-fire-1815.firebaseio.com/-JQsiwN-QJMFiEsUgTn3');
+
+    dailyGif.update({ image: newGif.image, by: newGif.by });
+
+    var removeGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+
+    removeGif.child(reference).remove();
+
   };
 
   updateByCookies();
