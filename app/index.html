@@ -48,13 +48,11 @@
 
         <div data-ng-show="state == 'tomorrow'" class="row">
           <div data-ng-repeat="gif in showGifs" class="col-md-6">
-              <div class="thumbnail">
-                <img class="img-responsive" src="{{gif.image}}"></img>
-                <br>
-                <p>Tillagd av: {{gif.by}}</p>
-                <p>Röster: <span class="badge">{{gif.votes}}</span></p>
-                <button class="btn btn-primary" data-ng-disabled="hasVoted" data-ng-click="addVote(gif.reference)">Rösta</button>
-                </div>
+              <img class="img-responsive" src="{{gif.image}}"></img>
+              <br>
+              <p>Tillagd av: {{gif.by}}</p>
+              <p>Röster: <span class="badge">{{gif.votes}}</span></p>
+              <button class="btn btn-primary" data-ng-disabled="hasVoted" data-ng-click="addVote(gif.reference)">Rösta</button>
             </div>
           </div>
         </div>

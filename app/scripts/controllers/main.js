@@ -141,26 +141,30 @@ angular.module('dagensgif')
     var mostVotes = 0;
     var reference = '';
     var newGif = {};
+    var gifSelected = false;
 
     var fourGifs = changeGif.startAt().limit(4);
 
     fourGifs.on('value', function(response) {
       response.forEach(function(gif) {
-          if(gif.votes > mostVotes) {
-            mostVotes = gif.votes();
-            reference = gif.name();
-            newGif = gif.val();
+          var nextGif = gif.val();
+          if(nextGif.votes > mostVotes) {
+            mostVotes = nextGif.votes;
+            newGif = nextGif;
+            gifSelected = true;
           }
       });
+
+      if(gifSelected) {
+        var dailyGif = new Firebase('https://blazing-fire-1815.firebaseio.com/-JQsiwN-QJMFiEsUgTn3');
+
+        dailyGif.update({ image: newGif.image, by: newGif.by });
+
+        var removeGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
+
+        removeGif.child(newGif.reference).remove();
+      }
     });
-
-    var dailyGif = new Firebase('https://blazing-fire-1815.firebaseio.com/-JQsiwN-QJMFiEsUgTn3');
-
-    dailyGif.update({ image: newGif.image, by: newGif.by });
-
-    var removeGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
-
-    removeGif.child(reference).remove();
 
   };
 
