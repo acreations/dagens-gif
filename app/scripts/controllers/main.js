@@ -99,6 +99,10 @@ angular.module('dagensgif')
       }
     });
 
+    dailyGif.off('value', function() {
+      
+    });
+
     $scope.hasVoted = $cookies.hasVoted;
   };
 
