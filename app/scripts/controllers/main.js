@@ -97,7 +97,6 @@ angular.module('dagensgif')
         $scope.image = gif.image;
         $scope.by = gif.by;
         sendYo();
-
       }
     });
 
