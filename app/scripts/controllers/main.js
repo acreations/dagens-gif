@@ -2,8 +2,8 @@
 
 angular.module('dagensgif')
 
-.controller('MainCtrl', ['$scope', '$log', '$cookies', 'dateFilter','dagensgifRepository', '$timeout',
-  function ($scope, $log, $cookies, dateFilter, dgr, $timeout) {
+.controller('MainCtrl', ['$scope', '$log', '$cookies', 'dateFilter','dagensgifRepository', '$timeout', '$http',
+  function ($scope, $log, $cookies, dateFilter, dgr, $timeout, $http) {
 
   $scope.settings = {};
   $scope.state = 'today';
@@ -96,12 +96,16 @@ angular.module('dagensgif')
         var gif = response.val();
         $scope.image = gif.image;
         $scope.by = gif.by;
+        sendYo();
+
       }
     });
 
     dailyGif.off('value', function() {
       
     });
+
+
 
     $scope.hasVoted = $cookies.hasVoted;
   };
@@ -171,6 +175,17 @@ angular.module('dagensgif')
     });
 
   };
+
+  var sendYo = function() {
+    dgr.sendYo().then(
+        function(data) {
+      
+        },
+        function(error) {
+
+        }
+    );
+  }
 
   updateByCookies();
   updateBodyStyle();
