@@ -96,7 +96,6 @@ angular.module('dagensgif')
         var gif = response.val();
         $scope.image = gif.image;
         $scope.by = gif.by;
-        sendYo();
       }
     });
 
@@ -170,6 +169,8 @@ angular.module('dagensgif')
         var removeGif = new Firebase('https://blazing-fire-1815.firebaseio.com/gifs');
 
         removeGif.child(newGif.reference).remove();
+
+        sendYo();
       }
     });
 
